@@ -19,7 +19,7 @@ def DisplayFormat(att3, displayValue):
     return DF
 
 def IgnoringAnswer(att1, att3, boolValue):
-    IA = att1 + ',IgnoreBlankAnswer,' + att3 + ',' + boolValue
+    IA = att1 + ',IgnoreBlankAnswers,' + att3 + ',' + boolValue
     return IA
 
 def AnswerVisibility(att1, att3, att3b):
@@ -50,7 +50,7 @@ while control:
     A3 = input('Enter Question Backend Name:')
     A1 = input('Enter Question Group Backend Name:')
     AV1 = input('Enter description order:')
-    Format = input('Answer Only:1/Name Only:2/Name and Answer:3 ')
+    Format = int(input('Answer Only:1/Name Only:2/Name and Answer:3 '))
     if Format == 1:
         Format = 'Answer Only'
     elif Format == 2:
@@ -116,7 +116,7 @@ while control:
     if SuffixText:
         row+=1
         SFT = Suffix(A1, A3, SuffixText)
-        text = PFT.split(',')
+        text = SFT.split(',')
         for i, cell in enumerate(text):
             sheet[column[i]+str(row)] = cell
 
