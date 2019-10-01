@@ -49,21 +49,37 @@ def NewEndLine(att1, att3, boolValue):
 while control:
     A3 = input('Enter Question Backend Name:')
     A1 = input('Enter Question Group Backend Name:')
-    A2 = A1
     AV1 = input('Enter description order:')
-    Format = input('Answer Only/Name Only/Name and Answer')
-    Ignore = input('Ignore Blank asnwer?T/F:')
-    Visibility = input('Type Backend answer to Hide')
-    PrefixText = input('Do you need something before your answer?')
-    SuffixText = input('Do you need something after?')
-    ChangeName = input('Do you want to change the name of the answer?')
+    Format = input('Answer Only:1/Name Only:2/Name and Answer:3 ')
+    if Format == 1:
+        Format = 'Answer Only'
+    elif Format == 2:
+        Format = 'Name Only'
+    elif Format == 3:
+        Format = 'Name and Answer'
+    else:
+        Format = ''
+    Ignore = input('Ignore Blank asnwer? t/f: ')
+    if Ignore == 't':
+        Ignore = 'True'
+    elif Ignore == 'f':
+        Ignore = 'False'
+    Visibility = input('Type Backend answer to Hide: ')
+    PrefixText = input('Do you need something before your answer? ')
+    SuffixText = input('Do you need something after? ')
+    ChangeName = input('Do you want to change the name of the answer? ')
     if ChangeName:
-        AnswerName = input('Type backend answer')
-    FractionDeciaml = input('Fraction or Decimal')
+        AnswerName = input('Type backend answer: ')
+    FractionDecimal = input('Decimal:1 or Fraction:2 ')
+    if FractionDecimal == 1:
+        FractionDecimal = 'True'
+    elif FractionDecimal == 2:
+        FractionDecimal = 'False'
+    
     initRow = row
 
     if AV1:
-        DO1 = DescriptionOrder(A2, A3, AV1)
+        DO1 = DescriptionOrder(A1, A3, AV1)
         text = DO1.split(',')
         for i, cell in enumerate(text):
             #print(cell)
@@ -110,12 +126,19 @@ while control:
         text = CN.split(',')
         for i, cell in enumerate(text):
             sheet[column[i]+str(row)] = cell
+        
+    if FractionDecimal:
+        row+=1
+        FD = DisplayFractionDecimal(A1, A3, FractionDecimal)
+        text = FD.split(',')
+        for i, cell in enumerate(text):
+            sheet[column[i]+str(row)] = cell
 
-    for x in range(initRow, row):
+    for x in range(initRow, row+1):
         print(row)
         sheet['E'+ str(x)] = '000'+ str(AV1)
-    control = input('T/F')
-    if control == 'F':
+    control = input('Continue? y/n: ')
+    if control == 'N':
         break
     else:
         control = True      
