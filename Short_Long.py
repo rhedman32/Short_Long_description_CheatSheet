@@ -141,13 +141,11 @@ while control:
     if control == 'N':
         break
     else:
-        control = True      
+        control = True
     row += 1
 
 wb.save(os.getcwd() + '\\' + '{:%m-%d-%Y-%H_%M_%S} '.format(datetime.datetime.now()) + '_Short_Description.xlsx')
 print('File Spit Out Completed')
-
-
 
 
 
