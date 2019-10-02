@@ -135,10 +135,13 @@ while control:
             sheet[column[i]+str(row)] = cell
 
     for x in range(initRow, row+1):
-        print(row)
-        sheet['E'+ str(x)] = '000'+ str(AV1)
+        print('***')
+        Desc = str(AV1)
+        while len(Desc) != 5:
+            Desc = '0' + Desc
+        sheet['E'+ str(x)] = Desc 
     control = input('Continue? y/n: ')
-    if control == 'N':
+    if control == 'n':
         break
     else:
         control = True
