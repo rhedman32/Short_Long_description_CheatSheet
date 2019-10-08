@@ -25,9 +25,9 @@ class Short_Long:
         self.frame_content = ttk.Frame(master)
         self.frame_content.pack()
         
-        ttk.Label(self.frame_content, text = 'Backend Question Name:').grid(row=0, column=0)
-        ttk.Label(self.frame_content, text = 'Backend Group Question Name:').grid(row=1, column=0)
-        ttk.Label(self.frame_content, text = 'Order of Description:').grid(row=2, column=0)
+        ttk.Label(self.frame_content, text = 'Backend Question Name:').grid(row=0, column=0, pady=3, sticky='e')
+        ttk.Label(self.frame_content, text = 'Backend Group Question Name:').grid(row=1, column=0, pady=3, sticky='e')
+        ttk.Label(self.frame_content, text = 'Order of Description:').grid(row=2, column=0, pady=3, sticky='e')
 
         self.entry_question = ttk.Entry(self.frame_content, width = 24)
         self.entry_group_question = ttk.Entry(self.frame_content, width = 24)
