@@ -17,13 +17,14 @@ class Short_Long:
         
         self.frame_header = ttk.Frame(master)
         self.frame_header.pack()
+        self.frame_header.columnconfigure(0, weigh=1)
         
         self.logo = PhotoImage(file = 'Masonite PP Banner for Aaron.png')
-        ttk.Label(self.frame_header, image = self.logo).grid(row=0, column=0)
-        ttk.Label(self.frame_header, text = 'Short & Long Description').grid(row=0, column=0)
+        ttk.Label(self.frame_header, image = self.logo).grid(row=0, column=0, columnspan=4)
+        ttk.Label(self.frame_header, text = 'Short & Long Description').grid(row=0, column=0, rowspan=2, columnspan=4)
 
         self.frame_content = ttk.Frame(master)
-        self.frame_content.pack()
+        self.frame_content.pack(expand=True)
         
         ttk.Label(self.frame_content, text = 'Backend Question Name:').grid(row=0, column=0, pady=3, sticky='e')
         ttk.Label(self.frame_content, text = 'Backend Group Question Name:').grid(row=1, column=0, pady=3, sticky='e')
@@ -37,9 +38,18 @@ class Short_Long:
         self.entry_group_question.grid(row=1, column=1)
         self.entry_order.grid(row=2, column=1)
 
-        ttk.Button(self.frame_content, text = 'Add')
-        ttk.Button(self.frame_content, text = 'Spit Out')
+        self.list_view = ttk.Treeview(self.frame_content)
+        self.list_view.grid(row=0, column=2, rowspan=6, columnspan=2, padx=3, pady=3)
 
+        ttk.Button(self.frame_content, text = 'Add', command=self.add).grid(row=6, column=1, pady=3)
+        ttk.Button(self.frame_content, text = 'Spit Out').grid(row=6, column=2, pady=3)
+
+    def add(self):
+        self.entry_question.delete(0, 'end')
+        self.entry_group_question.delete(0, 'end')
+        self.entry_order.delete(0, 'end')
+
+    # def SpitOut(self):
 
     def DescriptionOrder(att2, att3, attValue1):
         DO = 'Default,'+ att2 + ',' + att3 + ',' + attValue1 
