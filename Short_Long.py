@@ -15,13 +15,22 @@ class Short_Long:
 
     def __init__(self, master):
         
+        master.title('Short & Long Description Cheat Sheet')
+        # master.resizable(False, False)
+        master.configure(background='#DAF7A6')
+
+        self.style = ttk.Style()
+        self.style.configure('TFrame', background='#DAF7A6')
+        self.style.configure('TLabel', background='#DAF7A6')
+        self.style.configure('Header.TLabel', background='#90c74c', font=('bold'))
+
         self.frame_header = ttk.Frame(master)
         self.frame_header.pack()
         self.frame_header.columnconfigure(0, weigh=1)
         
         self.logo = PhotoImage(file = 'Masonite PP Banner for Aaron.png')
         ttk.Label(self.frame_header, image = self.logo).grid(row=0, column=0, columnspan=4)
-        ttk.Label(self.frame_header, text = 'Short & Long Description').grid(row=0, column=0, rowspan=2, columnspan=4)
+        ttk.Label(self.frame_header, text = 'Short & Long Description', style='Header.TLabel').grid(row=0, column=0, rowspan=2, columnspan=4)
 
         self.frame_content = ttk.Frame(master)
         self.frame_content.pack(expand=True)
