@@ -128,12 +128,12 @@ class Short_Long:
         A3 = self.entry_question.get()
         A1 = self.entry_group_question.get()
         AV1 = self.entry_order.get()
-        Format = str(self.DFormat)
-        Ignore = str(self.IgnoreBA)
+        Format = self.DFormat.get()
+        Ignore = self.IgnoreBA.get()
         if Ignore:
             Ignore = 'True'
         else:
-            Ignore = 'False'
+            Ignore = ''
         Visibility = self.entry_hide.get()
         PrefixText = self.entry_prefix.get()
         SuffixText = self.entry_suffix.get()
@@ -210,6 +210,8 @@ class Short_Long:
             while len(Desc) != 5:
                 Desc = '0' + Desc
             sheet['E'+ str(x)] = Desc
+        
+        self.list_view.insert('', str(initRow), str(initRow), text=AV1+' - '+A3)
 
         self.entry_question.delete(0, 'end')
         self.entry_group_question.delete(0, 'end')
