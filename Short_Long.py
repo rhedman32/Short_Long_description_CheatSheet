@@ -28,7 +28,7 @@ class Short_Long:
         self.frame_header.pack()
         self.frame_header.columnconfigure(0, weigh=1)
         
-        self.logo = PhotoImage(file = 'Masonite PP Banner for Aaron.png')
+        self.logo = PhotoImage(file = 'Masonite PP Banner.png')
         ttk.Label(self.frame_header, image = self.logo).grid(row=0, column=0, columnspan=4)
         ttk.Label(self.frame_header, text = 'Short & Long Description', style='Header.TLabel').grid(row=0, column=0, rowspan=2, columnspan=4)
 
@@ -54,10 +54,11 @@ class Short_Long:
         self.IgnoreBA = BooleanVar()
         self.Fraction = StringVar()
         self.row = 1
-
+        self.order=StringVar()
+    
         self.entry_question = ttk.Entry(self.frame_content, width = 24)
         self.entry_group_question = ttk.Entry(self.frame_content, width = 24)
-        self.entry_order = ttk.Entry(self.frame_content, width = 24)
+        self.entry_order = ttk.Entry(self.frame_content, width = 24, textvariable=self.order)
         self.entry_display = ttk.Combobox(self.frame_content, textvariable=self.DFormat)
         self.entry_display.config(values=('Answer Only', 'Name Only', 'Name and Answer'))
         self.entry_ignore = ttk.Checkbutton(self.frame_content)
@@ -85,9 +86,18 @@ class Short_Long:
         self.list_view = ttk.Treeview(self.frame_content)
         self.list_view.grid(row=0, column=2, rowspan=6, columnspan=2, padx=10, pady=5)
 
-        ttk.Button(self.frame_content, text = 'Add', command=self.add).grid(row=12, column=1, pady=3)
+        self.adding = ttk.Button(self.frame_content, text = 'Add', command=self.add)
+        self.adding.grid(row=12, column=1, pady=3)
         ttk.Button(self.frame_content, text = 'Spit Out', command=self.SpitOut).grid(row=12, column=2, pady=3)
+        self.adding.state(['disabled'])
 
+        def buttonFunction(*args):
+            if self.entry_question.get() and self.entry_group_question.get() and self.entry_order.get():
+                self.adding.state(['!disabled'])
+        
+        self.order.trace('w', buttonFunction)
+
+    #Clears the entry fields and 
     def add(self):
         def DescriptionOrder(att2, att3, attValue1):
             DO = 'Default,'+ att2 + ',' + att3 + ',' + attValue1 
@@ -143,8 +153,10 @@ class Short_Long:
         FractionDecimal = str(self.Fraction)
         if FractionDecimal == 'Decimal':
             FractionDecimal = 'True'
-        else:
+        elif FractionDecimal == 'Fraction':
             FractionDecimal = 'False'
+        else:
+            FractionDecimal = ''
 
         initRow = self.row
 
@@ -211,36 +223,27 @@ class Short_Long:
                 Desc = '0' + Desc
             sheet['E'+ str(x)] = Desc
         
-        self.list_view.insert('', str(initRow), str(initRow), text=AV1+' - '+A3)
+        self.list_view.insert('', AV1, A3, text=AV1+' - '+A3)
 
         self.entry_question.delete(0, 'end')
         self.entry_group_question.delete(0, 'end')
         self.entry_order.delete(0, 'end')
         self.entry_display.delete(0, 'end')
-        self.entry_ignore.destroy
+        if Ignore == 'True':
+            self.IgnoreBA.set(False)
         self.entry_hide.delete(0, 'end')
         self.entry_prefix.delete(0, 'end')
         self.entry_suffix.delete(0, 'end')
         self.entry_change_answer.delete(0, 'end')
         self.entry_change_backend.delete(0, 'end')
         self.entry_decimal.delete(0, 'end')
+        self.adding.state(['disabled'])
 
+    #Excel file is generated and clears the treeview pane
     def SpitOut(self):
+        for x in self.list_view.get_children():
+            self.list_view.delete(x)
         wb.save(os.getcwd() + '\\' + '{:%m-%d-%Y-%H_%M_%S} '.format(datetime.datetime.now()) + '_Short_Description.xlsx')
-    
-
-    # while control:
-
-        # control = input('Continue? y/n: ')
-        # if control == 'n':
-        #     break
-        # else:
-        #     control = True
-        # row += 1
-
-    
-    # print('File Spit Out Completed')
-
 
 def main():
     root = Tk()
