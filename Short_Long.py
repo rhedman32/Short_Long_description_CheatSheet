@@ -21,16 +21,21 @@ class Short_Long:
         self.style = ttk.Style()
         self.style.configure('TFrame', background='#DAF7A6')
         self.style.configure('TLabel', background='#DAF7A6')
-        self.style.configure('Header.TLabel', background='#90c74c', font=('bold'))
+        self.style.configure('Header.TLabel', foreground='white', background='#90c74c', font=('Aerial', 18,'bold'))
 
         #Frame Header Setup
         self.frame_header = ttk.Frame(master)
         self.frame_header.pack()
-        self.frame_header.columnconfigure(0, weigh=1)
+        # self.frame_header.columnconfigure(0, weight=1)
         
         self.logo = PhotoImage(file = 'Masonite PP Banner.png')
         ttk.Label(self.frame_header, image = self.logo).grid(row=0, column=0, columnspan=4)
         ttk.Label(self.frame_header, text = 'Short & Long Description', style='Header.TLabel').grid(row=0, column=0, rowspan=2, columnspan=4)
+        ttk.Label(self.frame_header, text = 'Long', foreground='#90c74c').grid(row=2, column=1, sticky='e')
+        
+        self.longer = BooleanVar()
+        self.entry_long = ttk.Checkbutton(self.frame_header, variable=self.longer, onvalue=True, offvalue=False)
+        self.entry_long.grid(row=2, column=2, sticky='w')
 
         #Frame Content Setup
         self.frame_content = ttk.Frame(master)
@@ -140,6 +145,7 @@ class Short_Long:
         AV1 = self.entry_order.get()
         Format = self.DFormat.get()
         Ignore = self.IgnoreBA.get()
+        NewLine = self.longer.get()
         if Ignore:
             Ignore = 'True'
         else:
@@ -157,6 +163,9 @@ class Short_Long:
             FractionDecimal = 'False'
         else:
             FractionDecimal = ''
+        if NewLine:
+            NewLine = 'True'
+        
 
         initRow = self.row
 
@@ -216,6 +225,13 @@ class Short_Long:
             for i, cell in enumerate(text):
                 sheet[column[i]+str(self.row)] = cell
         
+        if NewLine:
+            self.row+=1
+            NL = NewEndLine(A1, A3, NewLine)
+            text = NL.split(',')
+            for i, cell in enumerate(text):
+                sheet[column[i]+str(self.row)] = cell
+        
         for x in range(initRow, self.row+1):
             print('***')
             Desc = str(AV1)
@@ -241,6 +257,7 @@ class Short_Long:
 
     #Excel file is generated and clears the treeview pane
     def SpitOut(self):
+        self.row = 1
         for x in self.list_view.get_children():
             self.list_view.delete(x)
         wb.save(os.getcwd() + '\\' + '{:%m-%d-%Y-%H_%M_%S} '.format(datetime.datetime.now()) + '_Short_Description.xlsx')
