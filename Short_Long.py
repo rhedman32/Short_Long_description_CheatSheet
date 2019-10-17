@@ -7,8 +7,6 @@ from tkinter import ttk
 
 wb = openpyxl.Workbook()
 sheet = wb.active
-column = ['A', 'B', 'C', 'D', 'E']
-control = True
 
 class Short_Long:
 
@@ -58,7 +56,7 @@ class Short_Long:
         self.DFormat = StringVar()
         self.IgnoreBA = BooleanVar()
         self.Fraction = StringVar()
-        self.row = 1
+        self.row = 0
         self.order=StringVar()
     
         self.entry_question = ttk.Entry(self.frame_content, width = 24)
@@ -165,72 +163,79 @@ class Short_Long:
             FractionDecimal = ''
         if NewLine:
             NewLine = 'True'
-        
+        else:
+            NewLine = ''
 
-        initRow = self.row
+        initRow = self.row+1
 
         if AV1:
+            # if self.row == 0:
+            #     sheet = wb.active
+            self.row+=1
             DO1 = DescriptionOrder(A1, A3, AV1)
             text = DO1.split(',')
             for i, cell in enumerate(text):
-                #print(cell)
-                sheet[column[i]+str(self.row)] = cell
+                print(i)
+                print(cell)
+                print(self.row)
+                sheet.cell(row=self.row, column=i+1).value = cell
+                # sheet[col[i]+str(self.row)] = cell
 
         if Format:
             self.row+=1
             DF1 = DisplayFormat(A3, Format)
             text = DF1.split(',')
             for i, cell in enumerate(text):
-                sheet[column[i]+str(self.row)] = cell
+                sheet.cell(row=self.row, column=i+1).value = cell
 
         if Ignore:
             self.row+=1
             IgnoreText = IgnoringAnswer(A1, A3, Ignore)
             text = IgnoreText.split(',')
             for i, cell in enumerate(text):
-                sheet[column[i]+str(self.row)] = cell
+                sheet.cell(row=self.row, column=i+1).value = cell
         
         if Visibility:
             self.row+=1
             VisibleText = AnswerVisibility(A1, A3, Visibility)
             text = VisibleText.split(',')
             for i, cell in enumerate(text):
-                sheet[column[i]+str(self.row)] = cell
+                sheet.cell(row=self.row, column=i+1).value = cell
 
         if PrefixText:
             self.row+=1
             PFT = Prefix(A1, A3, PrefixText)
             text = PFT.split(',')
             for i, cell in enumerate(text):
-                sheet[column[i]+str(self.row)] = cell
+                sheet.cell(row=self.row, column=i+1).value = cell
         
         if SuffixText:
             self.row+=1
             SFT = Suffix(A1, A3, SuffixText)
             text = SFT.split(',')
             for i, cell in enumerate(text):
-                sheet[column[i]+str(self.row)] = cell
+                sheet.cell(row=self.row, column=i+1).value = cell
 
         if ChangeName:
             self.row+=1
             CN = ChangeDisplayName(A1, A3, AnswerName, ChangeName)
             text = CN.split(',')
             for i, cell in enumerate(text):
-                sheet[column[i]+str(self.row)] = cell
+                sheet.cell(row=self.row, column=i+1).value = cell
             
         if FractionDecimal:
             self.row+=1
             FD = DisplayFractionDecimal(A1, A3, FractionDecimal)
             text = FD.split(',')
             for i, cell in enumerate(text):
-                sheet[column[i]+str(self.row)] = cell
+                sheet.cell(row=self.row, column=i+1).value = cell
         
         if NewLine:
             self.row+=1
             NL = NewEndLine(A1, A3, NewLine)
             text = NL.split(',')
             for i, cell in enumerate(text):
-                sheet[column[i]+str(self.row)] = cell
+                sheet.cell(row=self.row, column=i+1).value = cell
         
         for x in range(initRow, self.row+1):
             print('***')
@@ -257,10 +262,13 @@ class Short_Long:
 
     #Excel file is generated and clears the treeview pane
     def SpitOut(self):
-        self.row = 1
+        self.row = 0
         for x in self.list_view.get_children():
             self.list_view.delete(x)
         wb.save(os.getcwd() + '\\' + '{:%m-%d-%Y-%H_%M_%S} '.format(datetime.datetime.now()) + '_Short_Description.xlsx')
+        for i in range(1,sheet.max_row+1):
+            for j in range(1,sheet.max_column+1):
+                sheet.cell(row=i, column=j).value = ''
 
 def main():
     root = Tk()
