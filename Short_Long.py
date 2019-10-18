@@ -4,6 +4,7 @@ import datetime
 import os
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 
 wb = openpyxl.Workbook()
 sheet = wb.active
@@ -18,7 +19,7 @@ class Short_Long:
 
         self.style = ttk.Style()
         self.style.configure('TFrame', background='#DAF7A6')
-        self.style.configure('TLabel', background='#DAF7A6')
+        self.style.configure('TLabel', background='#DAF7A6', font=('Aerial', 10, 'bold'))
         self.style.configure('Header.TLabel', foreground='white', background='#90c74c', font=('Aerial', 18,'bold'))
 
         #Frame Header Setup
@@ -63,7 +64,7 @@ class Short_Long:
         self.entry_group_question = ttk.Entry(self.frame_content, width = 24)
         self.entry_order = ttk.Entry(self.frame_content, width = 24, textvariable=self.order)
         self.entry_display = ttk.Combobox(self.frame_content, textvariable=self.DFormat)
-        self.entry_display.config(values=('Answer Only', 'Name Only', 'Name and Answer'))
+        self.entry_display.config(values=('Answer Only', 'Name Only', 'Name and Answer'), width = 21)
         self.entry_ignore = ttk.Checkbutton(self.frame_content)
         self.entry_ignore.config(variable=self.IgnoreBA, onvalue=True, offvalue=False)
         self.entry_hide = ttk.Entry(self.frame_content, width = 24)
@@ -72,7 +73,7 @@ class Short_Long:
         self.entry_change_answer = ttk.Entry(self.frame_content, width = 24)
         self.entry_change_backend = ttk.Entry(self.frame_content, width = 24)
         self.entry_decimal = ttk.Combobox(self.frame_content, textvariable=self.Fraction)
-        self.entry_decimal.config(values=('Decimal', 'Fraction'))
+        self.entry_decimal.config(values=('Decimal', 'Fraction'), width = 21)
 
         self.entry_question.grid(row=0, column=1, pady=5)
         self.entry_group_question.grid(row=1, column=1, pady=5)
@@ -88,6 +89,7 @@ class Short_Long:
 
         self.list_view = ttk.Treeview(self.frame_content)
         self.list_view.grid(row=0, column=2, rowspan=6, columnspan=2, padx=10, pady=5)
+        self.list_view.heading('#0',text='Questions Inserted')
 
         self.adding = ttk.Button(self.frame_content, text = 'Add', command=self.add)
         self.adding.grid(row=12, column=1, pady=3)
@@ -263,9 +265,11 @@ class Short_Long:
     #Excel file is generated and clears the treeview pane
     def SpitOut(self):
         self.row = 0
+        if self.list_view.get_children():
+            wb.save(os.getcwd() + '\\' + '{:%m-%d-%Y-%H_%M_%S} '.format(datetime.datetime.now()) + '_Short_Description.xlsx')
+            messagebox.showinfo(title='Your File is Ready!', message='An excel file has been generated check \n'+os.getcwd())
         for x in self.list_view.get_children():
             self.list_view.delete(x)
-        wb.save(os.getcwd() + '\\' + '{:%m-%d-%Y-%H_%M_%S} '.format(datetime.datetime.now()) + '_Short_Description.xlsx')
         for i in range(1,sheet.max_row+1):
             for j in range(1,sheet.max_column+1):
                 sheet.cell(row=i, column=j).value = ''
