@@ -14,6 +14,7 @@ class Short_Long:
     def __init__(self, master):
         #Styling UI
         master.title('Short & Long Description Cheat Sheet')
+        master.iconbitmap('Masonite.ico')
         # master.resizable(False, False)
         master.configure(background='#DAF7A6')
 
@@ -266,7 +267,7 @@ class Short_Long:
     def SpitOut(self):
         self.row = 0
         if self.list_view.get_children():
-            wb.save(os.getcwd() + '\\' + '{:%m-%d-%Y-%H_%M_%S} '.format(datetime.datetime.now()) + '_Short_Description.xlsx')
+            wb.save(os.getcwd() + '\\' + '{:%m-%d-%Y-%H_%M_%S} '.format(datetime.datetime.now()) + '_Short_Description.csv')
             messagebox.showinfo(title='Your File is Ready!', message='An excel file has been generated check \n'+os.getcwd())
         for x in self.list_view.get_children():
             self.list_view.delete(x)
