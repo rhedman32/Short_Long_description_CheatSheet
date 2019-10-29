@@ -50,8 +50,8 @@ class Short_Long:
         ttk.Label(self.frame_content, text = 'Backend Answer to Hide:').grid(row=5, column=0, pady=3, sticky='e')
         ttk.Label(self.frame_content, text = 'Type in a Prefix:').grid(row=6, column=0, pady=3, sticky='e')
         ttk.Label(self.frame_content, text = 'Type in a Suffix:').grid(row=7, column=0, pady=3, sticky='e')
-        ttk.Label(self.frame_content, text = 'Type text of an answer to change:').grid(row=8, column=0, pady=3, sticky='e')
-        ttk.Label(self.frame_content, text = 'Type Backend answer that was changed:').grid(row=9, column=0, pady=3, sticky='e')
+        ttk.Label(self.frame_content, text = 'Display Answer Override:').grid(row=8, column=0, pady=3, sticky='e')
+        ttk.Label(self.frame_content, text = 'Overridden Answer Backend Name:').grid(row=9, column=0, pady=3, sticky='e')
         ttk.Label(self.frame_content, text = 'Fraction or Decimal:').grid(row=10, column=0, pady=3, sticky='e')
         
         #Entry Values for Questions
@@ -69,10 +69,12 @@ class Short_Long:
         self.entry_ignore = ttk.Checkbutton(self.frame_content)
         self.entry_ignore.config(variable=self.IgnoreBA, onvalue=True, offvalue=False)
         self.entry_hide = ttk.Entry(self.frame_content, width = 24)
+        self.hide_plus = ttk.Button(self.frame_content, text = '+',  command=self.additionalAnswers)
         self.entry_prefix = ttk.Entry(self.frame_content, width = 24)
         self.entry_suffix = ttk.Entry(self.frame_content, width = 24)
         self.entry_change_answer = ttk.Entry(self.frame_content, width = 24)
         self.entry_change_backend = ttk.Entry(self.frame_content, width = 24)
+        self.change_plus = ttk.Button(self.frame_content, text = '+', command=self.additionalChangedAnswers)
         self.entry_decimal = ttk.Combobox(self.frame_content, textvariable=self.Fraction)
         self.entry_decimal.config(values=('Decimal', 'Fraction'), width = 21)
 
@@ -82,14 +84,16 @@ class Short_Long:
         self.entry_display.grid(row=3, column=1, pady=5)
         self.entry_ignore.grid(row=4, column=1, sticky='w', pady=5)
         self.entry_hide.grid(row=5, column=1, pady=5)
+        self.hide_plus.grid(row=5, column=2, pady=5)
         self.entry_prefix.grid(row=6, column=1, pady=5)
         self.entry_suffix.grid(row=7, column=1, pady=5)
         self.entry_change_answer.grid(row=8, column=1, pady=5)
         self.entry_change_backend.grid(row=9, column=1, pady=5)
+        self.change_plus.grid(row=9, column=2, pady=5)
         self.entry_decimal.grid(row=10, column=1, pady=5)
 
         self.list_view = ttk.Treeview(self.frame_content)
-        self.list_view.grid(row=0, column=2, rowspan=6, columnspan=2, padx=10, pady=5)
+        self.list_view.grid(row=0, column=2, rowspan=5, columnspan=2, padx=10, pady=5)
         self.list_view.heading('#0',text='Questions Inserted')
 
         self.adding = ttk.Button(self.frame_content, text = 'Add', command=self.add)
@@ -103,44 +107,79 @@ class Short_Long:
         
         self.order.trace('w', buttonFunction)
 
+    def LastColumn(self, D):
+        Desc = str(D)
+        while len(Desc) != 5:
+            Desc = '0' + Desc
+        return Desc
+
+    def DescriptionOrder(self, att2, att3, attValue1):
+        DO = 'Default,'+ att2 + ',' + att3 + ',' + attValue1 + ',' + self.LastColumn(attValue1)
+        return DO
+
+    def DisplayFormat(self, att3, displayValue, desc):
+        DF = 'Default,DisplayFormat,' + att3 + ',' + displayValue + ',' + self.LastColumn(desc)
+        return DF
+
+    def IgnoringAnswer(self, att1, att3, boolValue, desc):
+        IA = att1 + ',IgnoreBlankAnswers,' + att3 + ',' + boolValue + ',' + self.LastColumn(desc)
+        return IA
+
+    def AnswerVisibility(self, att1, att3, att3b, desc):
+        AV = att1 + ',ItemVisible,' + att3 + ':' + att3b + ',False' + ',' + self.LastColumn(desc)
+        return AV
+
+    def Prefix(self, att1, att3, text, desc):
+        PRE = att1 + ',QuestionAnswerPrefix,' + att3 + ',' + text + ',' + self.LastColumn(desc)
+        return PRE
+
+    def Suffix(self, att1, att3, text, desc):
+        SUF = att1 + ',QuestionAnswerSuffix,' + att3 + ',' + text + ',' + self.LastColumn(desc)
+        return SUF
+
+    def ChangeDisplayName(self, att1, att3, att3b, text, desc):
+        CDN = att1 + ',QuestionAnswerName,' + att3 + ':' + att3b + ',' + text + ',' + self.LastColumn(desc)
+        return CDN
+
+    def DisplayFractionDecimal(self, att1, att3, boolValue, desc):
+        DFD = att1 + ',ReportAsDecimal,' + att3 + ',' + boolValue + ',' + self.LastColumn(desc)
+        return DFD
+
+    def NewEndLine(self, att1, att3, boolValue, desc):
+        NEL = att1 + ',EndsLine,' + att3 + ',' + boolValue + ',' + self.LastColumn(desc)
+        return NEL
+
+    def additionalAnswers(self):
+        Visibility = self.entry_hide.get()
+        A3 = self.entry_question.get()
+        A1 = self.entry_group_question.get()
+        AV1 = self.entry_order.get()
+        if Visibility:
+            self.row+=1
+            VisibleText = self.AnswerVisibility(A1, A3, Visibility, AV1)
+            text = VisibleText.split(',')
+            for i, cell in enumerate(text):
+                sheet.cell(row=self.row, column=i+1).value = cell
+        self.entry_hide.delete(0, 'end')
+    
+    def additionalChangedAnswers(self):
+        ChangeName = self.entry_change_answer.get()
+        if ChangeName:
+            AnswerName = self.entry_change_backend.get()
+        A3 = self.entry_question.get()
+        A1 = self.entry_group_question.get()
+        AV1 = self.entry_order.get()
+        if ChangeName:
+            self.row+=1
+            CN = self.ChangeDisplayName(A1, A3, AnswerName, ChangeName, AV1)
+            text = CN.split(',')
+            for i, cell in enumerate(text):
+                sheet.cell(row=self.row, column=i+1).value = cell
+        self.entry_change_answer.delete(0, 'end')
+        self.entry_change_backend.delete(0, 'end')
+
     #Clears the entry fields and 
     def add(self):
-        def DescriptionOrder(att2, att3, attValue1):
-            DO = 'Default,'+ att2 + ',' + att3 + ',' + attValue1 
-            return DO
-
-        def DisplayFormat(att3, displayValue):
-            DF = 'Default,DisplayFormat,' + att3 + ',' + displayValue
-            return DF
-
-        def IgnoringAnswer(att1, att3, boolValue):
-            IA = att1 + ',IgnoreBlankAnswers,' + att3 + ',' + boolValue
-            return IA
-
-        def AnswerVisibility(att1, att3, att3b):
-            AV = att1 + ',ItemVisible,' + att3 + ':' + att3b + ',False'
-            return AV
-
-        def Prefix(att1, att3, text):
-            PRE = att1 + ',QuestionAnswerPrefix,' + att3 + ',' + text
-            return PRE
-
-        def Suffix(att1, att3, text):
-            SUF = att1 + ',QuestionAnswerSuffix,' + att3 + ',' + text
-            return SUF
-
-        def ChangeDisplayName(att1, att3, att3b, text):
-            CDN = att1 + ',QuestionAnswerName,' + att3 + ':' + att3b + ',' + text
-            return CDN
-
-        def DisplayFractionDecimal(att1, att3, boolValue):
-            DFD = att1 + ',ReportAsDecimal,' + att3 + ',' + boolValue
-            return DFD
-
-        def NewEndLine(att1, att3, boolValue):
-            NEL = att1 + ',EndsLine,' + att3 + ',' + boolValue
-            return NEL
-
         A3 = self.entry_question.get()
         A1 = self.entry_group_question.get()
         AV1 = self.entry_order.get()
@@ -169,13 +208,13 @@ class Short_Long:
         else:
             NewLine = ''
 
-        initRow = self.row+1
+        # initRow = self.row+1
 
         if AV1:
             # if self.row == 0:
             #     sheet = wb.active
             self.row+=1
-            DO1 = DescriptionOrder(A1, A3, AV1)
+            DO1 = self.DescriptionOrder(A1, A3, AV1)
             text = DO1.split(',')
             for i, cell in enumerate(text):
                 print(i)
@@ -186,66 +225,66 @@ class Short_Long:
 
         if Format:
             self.row+=1
-            DF1 = DisplayFormat(A3, Format)
+            DF1 = self.DisplayFormat(A3, Format, AV1)
             text = DF1.split(',')
             for i, cell in enumerate(text):
                 sheet.cell(row=self.row, column=i+1).value = cell
 
         if Ignore:
             self.row+=1
-            IgnoreText = IgnoringAnswer(A1, A3, Ignore)
+            IgnoreText = self.IgnoringAnswer(A1, A3, Ignore, AV1)
             text = IgnoreText.split(',')
             for i, cell in enumerate(text):
                 sheet.cell(row=self.row, column=i+1).value = cell
         
         if Visibility:
             self.row+=1
-            VisibleText = AnswerVisibility(A1, A3, Visibility)
+            VisibleText = self.AnswerVisibility(A1, A3, Visibility, AV1)
             text = VisibleText.split(',')
             for i, cell in enumerate(text):
                 sheet.cell(row=self.row, column=i+1).value = cell
 
         if PrefixText:
             self.row+=1
-            PFT = Prefix(A1, A3, PrefixText)
+            PFT = self.Prefix(A1, A3, PrefixText, AV1)
             text = PFT.split(',')
             for i, cell in enumerate(text):
                 sheet.cell(row=self.row, column=i+1).value = cell
         
         if SuffixText:
             self.row+=1
-            SFT = Suffix(A1, A3, SuffixText)
+            SFT = self.Suffix(A1, A3, SuffixText, AV1)
             text = SFT.split(',')
             for i, cell in enumerate(text):
                 sheet.cell(row=self.row, column=i+1).value = cell
 
         if ChangeName:
             self.row+=1
-            CN = ChangeDisplayName(A1, A3, AnswerName, ChangeName)
+            CN = self.ChangeDisplayName(A1, A3, AnswerName, ChangeName, AV1)
             text = CN.split(',')
             for i, cell in enumerate(text):
                 sheet.cell(row=self.row, column=i+1).value = cell
             
         if FractionDecimal:
             self.row+=1
-            FD = DisplayFractionDecimal(A1, A3, FractionDecimal)
+            FD = self.DisplayFractionDecimal(A1, A3, FractionDecimal, AV1)
             text = FD.split(',')
             for i, cell in enumerate(text):
                 sheet.cell(row=self.row, column=i+1).value = cell
         
         if NewLine:
             self.row+=1
-            NL = NewEndLine(A1, A3, NewLine)
+            NL = self.NewEndLine(A1, A3, NewLine, AV1)
             text = NL.split(',')
             for i, cell in enumerate(text):
                 sheet.cell(row=self.row, column=i+1).value = cell
         
-        for x in range(initRow, self.row+1):
-            print('***')
-            Desc = str(AV1)
-            while len(Desc) != 5:
-                Desc = '0' + Desc
-            sheet['E'+ str(x)] = Desc
+        # for x in range(initRow, self.row+1):
+        #     print('***')
+        #     Desc = str(AV1)
+        #     while len(Desc) != 5:
+        #         Desc = '0' + Desc
+        #     sheet['E'+ str(x)] = Desc
         
         self.list_view.insert('', AV1, A3, text=AV1+' - '+A3)
 
@@ -278,8 +317,11 @@ class Short_Long:
 def main():
     root = Tk()
     ShortAndLong = Short_Long(root)
+    print(root.winfo_height())
+    print(root.winfo_width())
     root.mainloop()
     
+
 if __name__ == "__main__": main()
 
 
